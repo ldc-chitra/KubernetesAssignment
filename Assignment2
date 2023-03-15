@@ -1,0 +1,36 @@
+[root@ip-172-31-12-85 k8s-specifications]# kubectl delete po result-5d57b59f4b-9c6fk
+pod "result-5d57b59f4b-9c6fk" deleted
+
+[root@ip-172-31-12-85 k8s-specifications]# kubectl get all
+NAME                          READY   STATUS    RESTARTS   AGE
+pod/db-b54cd94f4-jdgzz        1/1     Running   0          40m
+pod/redis-868d64d78-2hhk2     1/1     Running   0          40m
+pod/result-5d57b59f4b-vwdms   1/1     Running   0          40s
+pod/vote-94849dc97-k2r5c      1/1     Running   0          31m
+pod/worker-dd46d7584-bnwhq    1/1     Running   0          26m
+
+[root@ip-172-31-12-85 ~]# kubectl delete po redis-868d64d78-2hhk2
+pod "redis-868d64d78-2hhk2" deleted
+[root@ip-172-31-12-85 ~]# kubectl get all
+NAME                          READY   STATUS    RESTARTS   AGE
+pod/db-b54cd94f4-jdgzz        1/1     Running   0          3h4m
+pod/redis-868d64d78-lpnzf     1/1     Running   0          16s
+pod/result-5d57b59f4b-vwdms   1/1     Running   0          144m
+pod/vote-94849dc97-k2r5c      1/1     Running   0          174m
+pod/worker-dd46d7584-bnwhq    1/1     Running   0          169m
+
+Pod gets restarted.
+Logs associated with the old pod is lost and only age of the pod changes when we delete the result pod and reddis pod
+
+[root@ip-172-31-12-85 ~]# kubectl delete po db-b54cd94f4-jdgzz
+pod "db-b54cd94f4-jdgzz" deleted
+[root@ip-172-31-12-85 ~]# kubectl get all
+NAME                          READY   STATUS    RESTARTS   AGE
+pod/db-b54cd94f4-9zcwh        1/1     Running   0          46s
+pod/redis-868d64d78-lpnzf     1/1     Running   0          2m22s
+pod/result-5d57b59f4b-vwdms   1/1     Running   1          146m
+pod/vote-94849dc97-k2r5c      1/1     Running   0          176m
+pod/worker-dd46d7584-bnwhq    1/1     Running   1          171m
+
+After deleting the db pod all the votes will be lost .Worker and result containers will restart without disturbing the application.
+We have to do storage isolation to preserve the db.
